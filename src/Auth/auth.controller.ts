@@ -19,6 +19,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('/login')
   async signIn(@Body() credentials: Pick<User, 'username' | 'password'>) {
+    console.log('Login endpoint reached');
+    console.log('port: ', process.env.PORT);
     const { access_token } = await this.authService.signIn(
       credentials.username,
       credentials.password
