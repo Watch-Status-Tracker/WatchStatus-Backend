@@ -2,17 +2,17 @@ import { User } from '@prisma/client';
 
 export const seedUsers: Omit<User, 'id'>[] = [
   {
-    userName: 'lajt',
+    username: 'lajt',
     email: 'lajt@lajt',
     password: 'lajt',
   },
   {
-    userName: 'kira',
+    username: 'kira',
     email: 'kira@kira',
     password: 'kira',
   },
   {
-    userName: 'numer',
+    username: 'numer',
     email: 'numer@numer',
     password: 'numer',
   },
