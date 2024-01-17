@@ -15,7 +15,7 @@ import { AppService } from './app.service';
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '3m' },
+      signOptions: { expiresIn: '10m' },
     }),
   ],
   controllers: [AppController, AuthController],
