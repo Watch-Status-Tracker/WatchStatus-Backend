@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -8,7 +9,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { UserService } from 'src/User/user.service';
-import { AdditionalData } from 'src/User/user.types';
+import { AdditionalData, PasswordData } from 'src/User/user.types';
 
 @Controller()
 export class UserController {
@@ -16,8 +17,12 @@ export class UserController {
 
   @HttpCode(HttpStatus.OK)
   @Post('/change-password')
-  async updatePassword(@Body() data, @Req() req, @Res() response) {
-    await this.userService.changePassword(req, data?.newPassword);
+  async updatePassword(
+    @Body() data: PasswordData,
+    @Req() req,
+    @Res() response
+  ) {
+    await this.userService.changePassword(req, data);
     response.status(200).send({
       status: HttpStatus.OK,
       message: 'Password updated successfully',
@@ -46,5 +51,22 @@ export class UserController {
       status: HttpStatus.OK,
       message: 'Additional data updated successfully',
     });
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/get-user-lists')
+  async getUserLists(@Req() req, @Res() response) {
+    const { lists } = await this.userService.getUserLists(req);
+
+    response.status(200).send(lists);
+  }
+
+  // get user personal informations
+  @HttpCode(HttpStatus.OK)
+  @Get('/get-user-personal-data')
+  async getUserPersonalData(@Req() req, @Res() response) {
+    const { personalData } = await this.userService.getUserPersonalData(req);
+
+    response.status(200).send(personalData);
   }
 }

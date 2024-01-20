@@ -2,15 +2,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import {
-  AdditionalData,
-  PasswordData,
-  PersonalData,
-} from 'src/User/user.types';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
-export class UserService {
+export class ListsService {
   constructor(
     private prismaService: PrismaService,
     private jwtService: JwtService
@@ -21,7 +16,7 @@ export class UserService {
     return type === 'Bearer' ? token : undefined;
   }
 
-  async changePassword(request: Request, data: PasswordData): Promise<any> {
+  async createList(request: Request, data: any): Promise<any> {
     const token = this.extractTokenFromHeader(request);
     let payload: any;
     try {
@@ -40,87 +35,20 @@ export class UserService {
       throw new Error('User not found');
     }
 
-    await this.prismaService.user.update({
-      where: { id: payload.sub },
-      data: { password: data.newPassword },
+    const list = await this.prismaService.list.create({
+      data: {
+        name: data.name,
+        // positions: { create: data.positions },
+        userId: payload.sub,
+      },
     });
+
+    return list;
   }
 
-  async changePersonalData(request: Request, data: PersonalData): Promise<any> {
+  async getLists(request: Request): Promise<any> {
     const token = this.extractTokenFromHeader(request);
     let payload: any;
-
-    try {
-      payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_SECRET,
-      });
-    } catch {
-      throw new UnauthorizedException();
-    }
-
-    const user = await this.prismaService.user.findUnique({
-      where: { id: payload.sub },
-    });
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    const updateData: PersonalData = {};
-    if (data?.username) {
-      updateData.username = data.username;
-    }
-    if (data?.email) {
-      updateData.email = data.email;
-    }
-
-    await this.prismaService.user.update({
-      where: { id: payload.sub },
-      data: updateData,
-    });
-  }
-
-  async changeAdditionalData(
-    request: Request,
-    data: AdditionalData
-  ): Promise<any> {
-    const token = this.extractTokenFromHeader(request);
-    let payload: any;
-
-    try {
-      payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_SECRET,
-      });
-    } catch {
-      throw new UnauthorizedException();
-    }
-
-    const user = await this.prismaService.user.findUnique({
-      where: { id: payload.sub },
-    });
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    const updateData: AdditionalData = {};
-    if (data?.title) {
-      updateData.title = data.title;
-    }
-    if (data?.favouriteGenre) {
-      updateData.favouriteGenre = data.favouriteGenre;
-    }
-
-    await this.prismaService.user.update({
-      where: { id: payload.sub },
-      data: updateData,
-    });
-  }
-
-  async getUserLists(request: Request): Promise<any> {
-    const token = this.extractTokenFromHeader(request);
-    let payload: any;
-
     try {
       payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET,
@@ -139,26 +67,14 @@ export class UserService {
 
     const lists = await this.prismaService.list.findMany({
       where: { userId: payload.sub },
-      select: {
-        id: true,
-        name: true,
-        positions: {
-          select: {
-            positionId: true,
-            title: true,
-            image: true,
-          },
-        },
-      },
     });
 
-    return { lists };
+    return lists;
   }
 
-  async getUserPersonalData(request: Request): Promise<any> {
+  async updateList(request: Request, data: any): Promise<any> {
     const token = this.extractTokenFromHeader(request);
     let payload: any;
-
     try {
       payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET,
@@ -175,14 +91,52 @@ export class UserService {
       throw new Error('User not found');
     }
 
-    const personalData = await this.prismaService.user.findUnique({
+    await this.prismaService.list.update({
+      where: { id: data.id },
+      data: {
+        name: data.name,
+      },
+    });
+  }
+
+  async addPositionToList(request: Request, data: any): Promise<any> {
+    const token = this.extractTokenFromHeader(request);
+    let payload: any;
+    try {
+      payload = await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_SECRET,
+      });
+    } catch {
+      throw new UnauthorizedException();
+    }
+
+    const user = await this.prismaService.user.findUnique({
       where: { id: payload.sub },
-      select: {
-        username: true,
-        title: true,
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const list = await this.prismaService.list.findUnique({
+      where: { id: data.listId },
+    });
+
+    if (!list) {
+      throw new Error('List not found');
+    }
+
+    const position = await this.prismaService.position.create({
+      data: {
+        positionId: data.positionId,
+        image: data.image,
+        title: data.title,
+        list: {
+          connect: { id: data.listId },
+        },
       },
     });
 
-    return { personalData };
+    return position;
   }
 }

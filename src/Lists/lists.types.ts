@@ -3,11 +3,11 @@ export interface PasswordData {
 }
 
 export interface PersonalData {
-  username?: string;
-  email?: string;
+  username: string;
+  email: string;
 }
 
 export interface AdditionalData {
-  title?: string;
-  favouriteGenre?: string;
+  title: string;
+  favouriteGenre: string;
 }

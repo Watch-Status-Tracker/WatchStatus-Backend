@@ -16,7 +16,7 @@
     "prisma:seed": "prisma db seed",
     "prisma:bonk": "yarn prisma:reset && yarn prisma:seed",
     "dev": "nest start",
-    "start:dev": "nest start --watch",
+    "dev:watch": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node ./dist/src/main.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

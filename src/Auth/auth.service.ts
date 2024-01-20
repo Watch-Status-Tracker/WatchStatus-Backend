@@ -45,8 +45,21 @@ export class AuthService {
       );
     }
 
-    await this.prismaService.user.create({
-      data,
+    const newUser = await this.prismaService.user.create({
+      data: {
+        username: data.username,
+        password: data.password,
+        email: data.email,
+        title: 'Watcher',
+        favouriteGenre: '',
+      },
+    });
+
+    await this.prismaService.list.create({
+      data: {
+        name: 'Currently watching',
+        userId: newUser.id,
+      },
     });
   }
 
