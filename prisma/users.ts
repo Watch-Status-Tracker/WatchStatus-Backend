@@ -22,4 +22,11 @@ export const seedUsers: Omit<User, 'id'>[] = [
     title: 'Movie watcher',
     favouriteGenre: '',
   },
+  {
+    username: 'tester',
+    email: 'tester@tester',
+    password: 'tester',
+    title: 'tester',
+    favouriteGenre: '',
+  },
 ];
