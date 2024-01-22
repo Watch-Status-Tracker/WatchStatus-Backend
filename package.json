@@ -14,7 +14,7 @@
     "prisma:push": "prisma db push",
     "prisma:reset": "prisma db push --force-reset",
     "prisma:seed": "prisma db seed",
-    "prisma:bonk": "yarn prisma:reset && yarn prisma:seed",
+    "prisma:nuke": "yarn prisma:reset && yarn prisma:seed",
     "dev": "nest start",
     "dev:watch": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -30,10 +30,10 @@
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
-    "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1",
     "@prisma/client": "^5.8.0",
-    "prisma": "^5.8.0"
+    "prisma": "^5.8.0",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -47,6 +47,7 @@
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "bcrypt": "^5.1.1",
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",

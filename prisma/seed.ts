@@ -4,7 +4,6 @@ import { seedUsers } from './users';
 const prisma = new PrismaClient();
 
 async function main() {
-  // await prisma.user.createMany({ data: seedUsers });
   for (const user of seedUsers) {
     const createdUser = await prisma.user.create({ data: user });
     await prisma.list.create({
