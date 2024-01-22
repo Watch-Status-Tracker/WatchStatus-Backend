@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma.service';
+import { comparePassword, hashPassword } from 'utils/bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +21,9 @@ export class AuthService {
       where: { username },
     });
 
-    if (user?.password !== password) {
+    const isPasswordValid = await comparePassword(password, user?.password);
+
+    if (!isPasswordValid) {
       throw new UnauthorizedException();
     }
     const { id: sub, ...userData } = user;
@@ -45,10 +48,12 @@ export class AuthService {
       );
     }
 
+    const hashedPassword = await hashPassword(data.password);
+
     const newUser = await this.prismaService.user.create({
       data: {
         username: data.username,
-        password: data.password,
+        password: hashedPassword,
         email: data.email,
         title: 'Watcher',
         favouriteGenre: '',
