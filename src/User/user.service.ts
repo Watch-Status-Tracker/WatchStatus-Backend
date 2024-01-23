@@ -8,6 +8,7 @@ import {
   PersonalData,
 } from 'src/User/user.types';
 import { PrismaService } from 'src/prisma.service';
+import { hashPassword } from 'utils/bcrypt';
 
 @Injectable()
 export class UserService {
@@ -40,9 +41,11 @@ export class UserService {
       throw new Error('User not found');
     }
 
+    const hashedPassword = await hashPassword(data.newPassword);
+
     await this.prismaService.user.update({
       where: { id: payload.sub },
-      data: { password: data.newPassword },
+      data: { password: hashedPassword },
     });
   }
 
